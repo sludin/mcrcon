@@ -13,6 +13,8 @@ INSTALL = install
 LINKER = -lreadline
 RM = rm -v -f
 
+SRCS = mcrcon.c commands.c
+OBJS = $(addsuffix .o,$(basename $(SRCS)))
 CC = gcc
 CFLAGS = -std=gnu99 -Wall -Wextra -Wpedantic -Os -s 
 EXTRAFLAGS ?= -fstack-protector-strong 
@@ -31,8 +33,11 @@ endif
 .PHONY: all
 all: $(EXENAME)
 
-$(EXENAME): mcrcon.c
-	$(CROSS_COMPILE)$(CC) $(CFLAGS) $(EXTRAFLAGS) -o $@ $< $(LINKER)
+$(EXENAME): $(OBJS)
+	$(CROSS_COMPILE)$(CC) $(OBJS) $(EXTRAFLAGS) -o $@ $(LINKER)
+
+%.o: %.c
+	$(CROSS_COMPLIE)$(CC) -c $< -o $@ $(CFLAGS) $(EXTRAFLAGS)
 
 ifneq ($(OS), Windows_NT)
 .PHONY: install
